@@ -1,0 +1,12 @@
+{
+    "Input Data": [
+        "/pcontent/ongoing/journal_content/INGEST_MASTER/_eBooks/OUP/Fetched/Reference/NEW/OXMED-1801-Jan2018/med-9780199837250-Breitbart_20180210000000.zip/med-9780199837250-Breitbart/med-9780199837250-Breitbart.xml",
+        "/pcontent/ongoing/journal_content/INGEST_MASTER/_eBooks/OUP/Fetched/Reference/NEW/OXMED-1801-Jan2018/med-9780199837250-Breitbart_20180210000000.zip/med-9780199837250-Breitbart/media/med-9780199837250-interactive-pdf-001.pdf",
+        "/pcontent/ongoing/journal_content/INGEST_MASTER/_eBooks/OUP/Fetched/Reference/NEW/OXMED-1801-Jan2018/med-9780199837250-Breitbart_20180210000000.zip/med-9780199837250-Breitbart/media/med-9780199837250-interactive-pdf-002.pdf",
+        "/pcontent/ongoing/journal_content/INGEST_MASTER/_eBooks/OUP/Fetched/Reference/NEW/OXMED-1801-Jan2018/med-9780199837250-Breitbart_20180210000000.zip/med-9780199837250-Breitbart/media/med-9780199837250-interactive-pdf-003.pdf",
+        "/pcontent/ongoing/journal_content/INGEST_MASTER/_eBooks/OUP/Fetched/Reference/NEW/OXMED-1801-Jan2018/med-9780199837250-Breitbart_20180210000000.zip/med-9780199837250-Breitbart/media/med-9780199837250-interactive-pdf-004.pdf",
+        "/pcontent/ongoing/journal_content/INGEST_MASTER/_eBooks/OUP/Fetched/Reference/NEW/OSEO Archive/201305/XML/9780198245254.zip/9780198245254/9780198245254-pp.xml [PDF not supplied]",
+        "/pcontent/ongoing/journal_content/INGEST_MASTER/_eBooks/OUP/Fetched/Reference/NEW/OHWM TARUSKIN/Volume 2/9780195384826-Taruskin-v2.xml"
+    ],
+    "Regex String": ".*NEW[\\\\/](OXMED|OSEO|OHWM).*(?:\\.zip)?[\\\\/].*[\\\\/]([a-z]*\\-?([0-9]{13})\\-.*)\\.(xml|pdf)$"
+}
