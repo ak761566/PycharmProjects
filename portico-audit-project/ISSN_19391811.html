@@ -1,0 +1,507 @@
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Portico</title>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/x-icon" href="/Portico/img/favicon.ico">
+
+	<!-- Bootstrap Core CSS -->
+	<link rel="stylesheet" href="/Portico/views/assets/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="/Portico/views/assets/css/offcanvas.css" />
+
+	<!-- Comon Styles -->
+	<link rel="stylesheet" href="/Portico/views/assets/css/style.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
+	<script src="/Portico/js/jquery.min.js"></script>
+
+	<!-- OneTrust Cookies Consent Notice start for portico.org -->
+	<script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" type="text/javascript" charset="UTF-8"
+		data-domain-script="7e4401c9-baa4-4827-98d8-646164d1d3c6"></script>
+	
+	<script type="text/javascript">
+		function OptanonWrapper() {}
+</script>
+	
+	<!-- OneTrust Cookies Consent Notice end for portico.org -->
+	<style>
+		h3 {
+			font-size: 22px;
+			line-height: 30px;
+		}
+
+		td {
+			font-size: 13px;
+			line-height: 20px;
+
+		}
+
+		div.well {
+			padding: 19px;
+			margin-bottom: 20px;
+			background-color: #f5f5f5;
+			border: 1px solid #e3e3e3;
+			-webkit-border-radius: 4px;
+			-moz-border-radius: 4px;
+			border-radius: 4px;
+			-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+			-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+			box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+			position: relative;
+			margin-top: 20px;
+			width: 325px !important;
+		}
+
+		div.colorStyle {
+			color: #616264 !important;
+		}
+
+		div.loginViewPleaseSignInLabelStyle {
+			-moz-border-bottom-colors: none;
+			-moz-border-left-colors: none;
+			-moz-border-right-colors: none;
+			-moz-border-top-colors: none;
+			border-color: #E5E5E5;
+			border-image: none;
+			border-style: none none solid;
+			border-width: 0 0 1px;
+			color: #333333;
+			display: block;
+			font-size: 21px;
+			line-height: 40px;
+			margin-bottom: 20px;
+			padding: 0;
+			width: 100%;
+		}
+
+		input.loginViewUsernameTextFieldStyle {
+			border-radius: 5px 5px 5px 5px;
+			height: 30px;
+			position: relative;
+			width: 99%;
+			margin-bottom: 10px;
+			font-size: 13px !important;
+			background-color: #ffffff;
+			border: 1px solid #cccccc;
+		}
+
+		input.loginViewPasswordFieldStyle {
+			border-radius: 5px 5px 5px 5px;
+			height: 30px;
+			position: relative;
+			width: 99%;
+			font-size: 13px !important;
+			background-color: #ffffff;
+			border: 1px solid #cccccc;
+		}
+
+		button.btn-info {
+			margin: 10px;
+			font-size: 18px;
+		}
+
+		.error,
+		.user-exists {
+			border: 1px solid transparent;
+			border-radius: 4px;
+			margin-bottom: 10px;
+			color: #a94442;
+			background-color: #f2dede;
+			border-color: #ebccd1;
+			padding: 5px;
+		}
+
+		.msg {
+			border: 1px solid transparent;
+			border-radius: 4px;
+			margin-bottom: 10px;
+			color: #31708f;
+			background-color: #d9edf7;
+			border-color: #bce8f1;
+			padding: 5px;
+		}
+
+		.success {
+			border: 1px solid transparent;
+			border-radius: 4px;
+			margin-bottom: 10px;
+			color: #31708f;
+			background-color: #d9edf7;
+			border-color: #bce8f1;
+			padding: 5px;
+		}
+
+		.show-component {
+			display: block;
+		}
+
+		.hide-component {
+			display: none;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container desktop-version" style="max-width: 80%;">
+		<div class="row">
+			<!--Left Nav Bar -->
+			<div class="col-lg-2 col-md-2 col-2 bg-light p-0 nav-hide" style="background-color: white !important;">
+				<div class="desktop-version col-lg-12 col-md-12 col-12 nav-sticky" id="leftnav" style="padding: 0px">
+					<div class="nav-sticky">
+						<div class="logo pt-2">
+							<a href="#" aria-label="Portico">
+								<div class="desktop-img-size"></div>
+							</a>
+						</div>
+						<div class="btn-audit">
+							<a href="#" class="btn btn-black" aria-label="Dashboard">Dashboard</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!--Right Bar-->
+			<div class="col-xl-10 col-lg-10 col-md-12 col-sm-12 col-10">
+				<div class="topnav">
+					<div class="topnav-right">
+						<a aria-current="page" class="nav-link anchor" href="https://www.portico.org/"
+							target="_blank">Portico Home</a>
+
+						<a class="nav-link anchor" href="https://www.portico.org/contact-us/" target="_blank"> Contact
+							Us</a>
+
+						<a class="nav-link anchor" href="https://www.portico.org/coverage/request-holdings-comparison/"
+							target="_blank"> Compare Holdings</a>
+
+						<a class="nav-link anchor" href="/Portico/login" target="_blank"> Login</a>
+					</div>
+				</div>
+
+				<div class="nav-sticky nav-position">
+					<div class="row">
+						<div class="logo col-md-1 col-sm-1 tab-version">
+							<a href="#">
+								<div class="tab-img-size"></div>
+							</a>
+						</div>
+
+						<div class="tab-version mobile-version" style="width: 80%;">
+							<div class="col-md-1 col-sm-1 p-0" style="float: right;">
+								<button type="button" class="btn btn-download" onclick="showSideBar()">Menu</button>
+							</div>
+							<div class="sidebar hide-component" id="sidebar">
+								<a href="javascript:void(0)" class="closebtn" onclick="hideSideBar()">×</a>
+
+								<span style="display: flex; flex-direction: column;">
+									<div style="margin-left: 15px;">
+										<a style="padding: 0px;" class="anchor" href="https://www.portico.org/"
+											target="_blank">Portico Home</a>
+										<a style="padding: 0px;" class="anchor"
+											href="https://www.portico.org/contact-us/" target="_blank">Contact Us</a>
+										<a style="padding: 0px; margin-bottom: 10px;" class="anchor"
+											href="https://www.portico.org/coverage/request-holdings-comparison/"
+											target="_blank">Compare Holdings</a>
+
+										<a class="nav-link anchor" href="/Portico/login" target="_blank"> Login</a>
+									</div>
+							</div>
+							</span>
+						</div>
+					</div>
+				</div>
+
+				<div class="row" id="container" style="margin: 20px 40px;">
+					<div class="dashboardVerticalLayoutStyle row">
+						<div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 order-xl-1 order-lg-1 order-md-1 order-sm-2">
+							<table class="table complete2">
+	<tbody>
+		<tr class="trBoarderBottomStyle">
+			<td>
+				<h3 class="colorStyle">97%</h3>
+			</td>
+			<td>
+				<h3 class="colorStyle">Journals Preserved</h3>
+				<p>4,403,898 out of the 4,822,306 journal issues
+					committed are preserved in Portico.</p>
+			</td>
+		</tr>
+		<tr class="trBoarderBottomStyle">
+			<td>
+				<h3 class="colorStyle">150%</h3>
+			</td>
+			<td>
+				<h3 class="colorStyle">Books Preserved</h3>
+				<p>3,792,674 out of 2,521,557 committed books are
+					preserved in Portico.</p>
+			</td>
+		</tr>
+		<tr class="trBoarderBottomStyle">
+			<td>
+				<h3 class="colorStyle">97%</h3>
+			</td>
+			<td>
+				<h3 class="colorStyle">Digitized Primary Source
+					Collections Preserved</h3>
+				<p>726 out of 747 committed collections are preserved in
+					Portico.</p>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td class="sig">As of 19-Sep-2025</td>
+		</tr>
+	</tbody>
+</table>
+						</div>
+						<div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 order-xl-2 order-lg-2 order-md-2 order-sm-1">
+							<div class="span4 well loginViewVerticalLayoutStyle" style="float: right;">
+	<div class="loginViewPleaseSignInLabelStyle colorStyle"> Please Sign In</div>
+	<form id="loginForm" method="post" action="login">
+		<div style="width: 100%;display:inline-block;">
+			<div class="error" style="display: none"></div>
+			<div class="msg" style="display: none"></div>
+			
+			<input type="text"
+				class="loginViewUsernameTextFieldStyle userNameField"
+				id="username" aria-labelledby="gwt-uid-4"
+				name="username" autocomplete="on" tabindex="0"
+				placeholder="Username">
+			<input type="password"
+				class="loginViewPasswordFieldStyle passwordField"
+				id="password" aria-labelledby="gwt-uid-6"
+				name="password" autocomplete="on" tabindex="0"
+				placeholder="Password">
+			<div id="recaptcha_div"></div>
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			
+			<button type="submit" name="submit" style="font-size:19px;font-weight:bold;float: right"
+				class="btn btn-info btn-lg">
+	          <i class="fa fa-sign-in" style="font-size:19px;font-weight:bold;color:white"></i>
+	          SIGN IN
+	        </button>
+		</div>
+	</form>
+</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="mobile-version">
+		<div>
+			<div class="col-lg-12 col-md-12 col-12 bg-light p-0">
+				<div class="mobile-version logo pt-2">
+					<a href="#">
+						<div class="desktop-img-size"></div>
+					</a>
+				</div>
+				<div class="mobile-version btn-audit mb-0">
+					<a href="#" class="btn btn-black">Audit</a>
+				</div>
+
+			</div>
+
+			<div class="nav-sticky nav-position">
+				<div class="row" style="max-width: 100%; margin: auto;">
+					<div class="tab-version mobile-version" style="width:100%">
+						<div class="col-md-1 col-sm-1 p-0">
+							<button type="button" style="float: right;margin-right: 20px;" class="btn btn-download"
+								onclick="showSideBarMobile()">Menu</button>
+						</div>
+						<div class="sidebar hide-component" id="sidebarMobile">
+							<a href="javascript:void(0)" class="closebtn" onclick="hideSideBarMobile()">×</a>
+
+							<span style="display: flex; flex-direction: column;">
+								<div style="margin-left: 15px;">
+									<a style="padding: 0px;" class="anchor" href="https://www.portico.org/"
+										target="_blank">Portico Home</a>
+									<a style="padding: 0px;" class="anchor" href="https://www.portico.org/contact-us/"
+										target="_blank">Contact Us</a>
+									<a style="padding: 0px; margin-bottom: 10px;" class="anchor"
+										href="https://www.portico.org/coverage/request-holdings-comparison/"
+										target="_blank">Compare Holdings</a>
+
+									<a class="nav-link anchor" href="/Portico/login" target="_blank"> Login</a>
+								</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="row" id="containerMobile" style="margin: 20px 50px;">
+				<div class="dashboardVerticalLayoutStyle row" style="margin: 0px;">
+					<div class="col-12">
+						<div class="span4 well loginViewVerticalLayoutStyle" style="float: right;">
+	<div class="loginViewPleaseSignInLabelStyle colorStyle"> Please Sign In</div>
+	<form id="loginForm" method="post" action="login">
+		<div style="width: 100%;display:inline-block;">
+			<div class="error" style="display: none"></div>
+			<div class="msg" style="display: none"></div>
+			
+			<input type="text"
+				class="loginViewUsernameTextFieldStyle userNameField"
+				id="username" aria-labelledby="gwt-uid-4"
+				name="username" autocomplete="on" tabindex="0"
+				placeholder="Username">
+			<input type="password"
+				class="loginViewPasswordFieldStyle passwordField"
+				id="password" aria-labelledby="gwt-uid-6"
+				name="password" autocomplete="on" tabindex="0"
+				placeholder="Password">
+			<div id="recaptcha_div"></div>
+			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+			
+			<button type="submit" name="submit" style="font-size:19px;font-weight:bold;float: right"
+				class="btn btn-info btn-lg">
+	          <i class="fa fa-sign-in" style="font-size:19px;font-weight:bold;color:white"></i>
+	          SIGN IN
+	        </button>
+		</div>
+	</form>
+</div>
+					</div>
+					<div class="col-12">
+						<table class="table complete2">
+	<tbody>
+		<tr class="trBoarderBottomStyle">
+			<td>
+				<h3 class="colorStyle">97%</h3>
+			</td>
+			<td>
+				<h3 class="colorStyle">Journals Preserved</h3>
+				<p>4,403,898 out of the 4,822,306 journal issues
+					committed are preserved in Portico.</p>
+			</td>
+		</tr>
+		<tr class="trBoarderBottomStyle">
+			<td>
+				<h3 class="colorStyle">150%</h3>
+			</td>
+			<td>
+				<h3 class="colorStyle">Books Preserved</h3>
+				<p>3,792,674 out of 2,521,557 committed books are
+					preserved in Portico.</p>
+			</td>
+		</tr>
+		<tr class="trBoarderBottomStyle">
+			<td>
+				<h3 class="colorStyle">97%</h3>
+			</td>
+			<td>
+				<h3 class="colorStyle">Digitized Primary Source
+					Collections Preserved</h3>
+				<p>726 out of 747 committed collections are preserved in
+					Portico.</p>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td class="sig">As of 19-Sep-2025</td>
+		</tr>
+	</tbody>
+</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row m-auto container" style="text-align: center; padding: 0px;max-width: 80%;">
+		<footer class="footer" style="width: 100%;">
+			<div class="" style="background: none repeat scroll 0% 0% rgb(238, 238, 238); font-size: 10px;">
+				<div>
+					<ul>
+						<li style="display: inline">
+							<a class="borderDottedStyle anchor" href="https://www.portico.org/contact-us/"
+								target="_blank"
+								title="Email addresses, contact us form, and phone numbers that will reach Portico.">Contact
+								Us</a> | </li>
+
+						<li style="display: inline">
+							<a class="borderDottedStyle anchor" href="https://www.ithaka.org/careers/"
+								target="_blank">Careers</a> | </li>
+
+						<li style="display: inline">
+							<a class="borderDottedStyle anchor" href="https://www.ithaka.org/privacypolicy"
+								target="_blank"
+								title="Portico is committed to protecting the privacy of users of its websites and services.">Privacy
+								Policy</a> | </li>
+
+						<li style="display: inline">
+							<a class="borderDottedStyle anchor" href="https://www.ithaka.org/cookies" target="_blank"
+								title="Cookie Policy">Cookie
+								Policy</a> | </li>
+
+						<li style="display: inline">
+							<a class="borderDottedStyle anchor" href="javascript:void(0)"
+								onclick="OneTrust.ToggleInfoDisplay()">Cookie settings</a> | </li>
+
+						<li style="display: inline">
+							<a class="borderDottedStyle anchor" href="https://www.portico.org/terms-conditions-use/"
+								target="_blank"
+								title="By using the Portico archive, you agree to abide by these Terms and Conditions of Use.">Terms
+								and Conditions of Use</a></li>
+
+						<li class="longform" style="display: inline; color: #000000;">
+							&nbsp;&reg;&nbsp;2005-
+							<script>document.write(new Date().getFullYear())</script>.
+							Portico<sup>&reg;</sup> and ITHAKA<sup>&reg;</sup> are trademarks of ITHAKA</li>
+					</ul>
+				</div>
+				<div style="background-color: rgb(164, 165, 168); padding: 15px; color:black;">
+					<p> The Portico digital preservation service is part of
+						<a href="http://www.ithaka.org/" rel="external" style="color:black">ITHAKA</a>, a
+						not-for-profit
+						organization helping the academic community use digital technologies to preserve the
+						scholarly record
+						and to advance research and teaching in sustainable ways. </p>
+				</div>
+			</div>
+		</footer>
+	</div>
+
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$('#containerMobile').css('min-height', window.innerHeight * .8);
+			$('#container').css('min-height', window.innerHeight * .8);
+
+			if (window.location.href.indexOf("error") > -1) {
+				$('.error').toggle();
+				$('.error').html('Invalid username and password!');
+			}
+			if (window.location.href.indexOf("logout") > -1) {
+				$('.msg').toggle();
+				$('.msg').html('You\'ve been logged out successfully.');
+			}
+		});
+		$(window).resize(function () {
+			$('#containerMobile').css('min-height', window.innerHeight * .8);
+			$('#container').css('min-height', window.innerHeight * .8);
+		});
+		function showSideBar() {
+			$('#sidebar').removeClass("hide-component");
+			$('#sidebar').addClass("show-component");
+		}
+
+		function hideSideBar() {
+			$('#sidebar').removeClass("show-component");
+			$('#sidebar').addClass("hide-component");
+		}
+		function showSideBarMobile() {
+			$('#sidebarMobile').removeClass("hide-component");
+			$('#sidebarMobile').addClass("show-component");
+		}
+
+		function hideSideBarMobile() {
+			$('#sidebarMobile').removeClass("show-component");
+			$('#sidebarMobile').addClass("hide-component");
+		}
+	</script>
+</body>
+
+</html>
