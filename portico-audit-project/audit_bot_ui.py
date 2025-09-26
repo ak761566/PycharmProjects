@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import messagebox
 
 import data_handling
+import book_data_handling
 from data_handling import *
 from log_handling import *
 from portico_audit_check_bot import *
@@ -63,15 +64,17 @@ class AUDIT_BOT_UI:
         self.choice_frame.pack(padx=10, pady=10)
 
         self.choice_var = IntVar()
+        self.choice_var.set(1)
 
-        self.Journal_choice = Radiobutton(self.choice_frame, text="Journal", variable=self.choice_var, value=0)
+        self.Journal_choice = Radiobutton(self.choice_frame, text="Journal", variable=self.choice_var, value=1, command=self.on_choice_select)
         self.Journal_choice.grid(row=0, column=0, padx=5)
 
-        self.Book_choice = Radiobutton(self.choice_frame, text="Book", variable=self.choice_var, value=2)
+        self.Book_choice = Radiobutton(self.choice_frame, text="Book", variable=self.choice_var, value=2, command=self.on_choice_select)
         self.Book_choice.grid(row=0, column=1, padx=5)
 
-        self.Standard_choice = Radiobutton(self.choice_frame, text="Standard", variable=self.choice_var, value=3)
+        self.Standard_choice = Radiobutton(self.choice_frame, text="Standard", variable=self.choice_var, value=3, command=self.on_choice_select)
         self.Standard_choice.grid(row=0, column=2, padx=5)
+
 
 
         # --------------Frame 3 -----------------------
@@ -88,7 +91,7 @@ class AUDIT_BOT_UI:
         self.sheet_name_entry = Entry(self.audit_frame, width=20)
         self.sheet_name_entry.grid(row=0, column=2, pady=10)
 
-        self.provider_name_label = Label(self.audit_frame, text="Provider", font=(FONT_NAME, 10, "bold"), )
+        self.provider_name_label = Label(self.audit_frame, text="Provider ID", font=(FONT_NAME, 10, "bold"), )
         self.provider_name_label.grid(row=0, column=3, pady=10)
 
         self.provider_name_entry = Entry(self.audit_frame, width=20)
@@ -109,7 +112,7 @@ class AUDIT_BOT_UI:
 
         self.status_canvas = Canvas(self.result_frame, height=50, width=600)
         self.status_canvas.grid(row=0, column=0, padx=5, sticky="w")
-        self.status_canvas_text = self.status_canvas.create_text(300, 25, text="Audit Completeness check bot.",
+        self.status_canvas_text = self.status_canvas.create_text(300, 25, width=500, text="Audit Completeness check bot.",
                                                                  font=(FONT_NAME, 10, "bold"))
 
         self.result_text = Text(self.result_frame, height=18, width=90)
@@ -120,6 +123,18 @@ class AUDIT_BOT_UI:
         self.load_data()
 
         self.audit_window.mainloop()
+
+    def on_choice_select(self):
+        choice = self.choice_var.get()
+        if choice == 2:
+            self.provider_name_label.config(text="Content Set")
+            self.provider_name_entry.delete("0", END)
+        elif choice == 3:
+            self.provider_name_label.config(text="Standard ID")
+            self.provider_name_entry.delete("0", END)
+        else:
+            self.provider_name_label.config(text="Provider ID")
+            self.provider_name_entry.delete("0", END)
 
 
     def set_file_path(self, path):
@@ -174,7 +189,12 @@ class AUDIT_BOT_UI:
                 json.dump(data, login_data, indent=4)
 
             try:
-                data_handling.login_in_portico_audit_site(self.user_name_entry.get(), self.password_entry.get())
+                if self.choice_var.get() == 1:
+                    data_handling.login_in_portico_audit_site(self.user_name_entry.get(), self.password_entry.get())
+                elif self.choice_var.get() == 2:
+                    book_data_handling.login_in_portico_book_audit_site(self.user_name_entry.get(), self.password_entry.get())
+                else:
+                    pass
             except WebDriverException as e:
                 self.result_text.delete("1.0", END)
                 self.result_text.insert("1.0", "Disconnect VPN before running this App.")
@@ -196,8 +216,12 @@ class AUDIT_BOT_UI:
                     with open(os.path.join(log_folder_path, "input_file_details.json"), "w+") as input_file_data:
                         json.dump(input_details, input_file_data, indent=4)
 
-                    data_handling.PROVIDER = self.provider_name_entry.get()
-
+                    if self.choice_var.get() == 1:
+                        data_handling.PROVIDER = self.provider_name_entry.get()
+                    elif self.choice_var.get() == 2:
+                        book_data_handling.CONTENT_SET = self.provider_name_entry.get()
+                    else:
+                        pass
 
                     window_file_path = self.get_file_path()
                     unix_file_path = window_file_path.replace("C:\\", '').replace("\\", '/')
@@ -209,13 +233,18 @@ class AUDIT_BOT_UI:
                     window = self.audit_window
                     provider = self.provider_name_entry.get()
 
-
-
                     if unix_file_path == '':
                         messagebox.showinfo("Input File", "Please select input file.")
                     else:
                         try:
-                            data_handling.start_completeness_check_on_audit_site(unix_file_path, sheet_name, result_text, window, provider)
+                            if self.choice_var.get() == 1:
+                                data_handling.start_completeness_check_on_audit_site(unix_file_path, sheet_name, result_text, window, provider)
+                            elif self.choice_var.get() == 2:
+                                pass
+                            else:
+                                pass
+
+
                         except TimeoutError:
                             self.result_text.delete("1.0", END)
                             self.result_text.insert("1.0", "Time out Error. Please try after some time.")

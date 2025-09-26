@@ -148,21 +148,30 @@ def start_completeness_check_on_audit_site(xsls_file_path, sheet_name, result_te
         result_text.delete("1.0", END)
         result_text.insert("1.0", f"Time lapse: {abs(minutes_lapses)} minutes and  {seconds_lapses} seconds.\n\n Please check output file [{input_file_name}_{times_stamp}.xlsx]. ")
         if len(title_not_found_on_audit) > 0:
-            result_text.insert(END, "\n\n----------------List of Titles not found on the Audit Site------------------------ \n\n")
+            result_text.insert(END, f"\n\n----------------List of Titles not found on the Audit Site under the provider {provider.upper()} ----- \n\n")
             for title  in title_not_found_on_audit:
                 result_text.insert(END, title + "\n")
 
         window.update()
-        # if os.path.isdir(html_folder_path):
-        #     for filename in os.listdir(html_folder_path):
-        #         file_path = os.path.join(html_folder_path, filename)
-        #         os.remove(file_path)
-        #         print(f"File {file_path} deleted successfully.")
+        agent.force_quit_driver()
+        if os.path.isdir(html_folder_path):
+            for filename in os.listdir(html_folder_path):
+                file_path = os.path.join(html_folder_path, filename)
+                os.remove(file_path)
+                print(f"File {file_path} deleted successfully.")
+        agent.empty_searched_list()
+    except AttributeError:
+        result_text.delete("1.0", END)
+        result_text.insert(END,
+                           "\n\n Error: Please check the column header. Required [JOURNAL_TITLE	VOLUME	ISSUE and	PROVIDER.]")
+        window.update()
+        agent.force_quit_driver()
     except ValueError:
         result_text.delete("1.0", END)
         result_text.insert(END,
                            "\n\n Error: Please provide correct sheet name from the workbook.")
         window.update()
+        agent.force_quit_driver()
 
 
     # print(f"Please check output file [{input_file_name}_{times_stamp}.xlsx]. Time lapses: {abs(minutes_lapses)} minutes and  {seconds_lapses} seconds.")

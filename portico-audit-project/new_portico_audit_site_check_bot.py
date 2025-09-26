@@ -71,21 +71,24 @@ class NewAuditCheckAgent:
                 for title in div_table_titles:
                     try:
                         journal_title_text = title.find_element(By.XPATH, f"div[1]/a").text
-                        # print("journal_title_text", journal_title_text)
-                        content_set = title.find_element(By.XPATH, f"div[1]/span").text
-                        # print("content_set", content_set)
-                        # print(f"https://audit.portico.org/Portico/rest/cmi/getCompletenessReport?cs={content_set}")
-                        self.driver.get(f"https://audit.portico.org/Portico/rest/cmi/getCompletenessReport?cs={content_set}")
-                        page_source = self.driver.page_source
-                        #print(page_source)
-                        with open(f"{html_folder_path}/{journal_title}.html", "w") as html_file:
-                            html_file.write(page_source)
+                        if journal_title == journal_title_text:
+                            # print("journal_title_text", journal_title_text)
+                            content_set = title.find_element(By.XPATH, f"div[1]/span").text
+                            # print("content_set", content_set)
+                            # print(f"https://audit.portico.org/Portico/rest/cmi/getCompletenessReport?cs={content_set}")
+                            self.driver.get(f"https://audit.portico.org/Portico/rest/cmi/getCompletenessReport?cs={content_set}")
+                            page_source = self.driver.page_source
+                            #print(page_source)
+                            with open(f"{html_folder_path}/{journal_title}.html", "w") as html_file:
+                                html_file.write(page_source)
 
-                        found_journal_title_list.append(journal_title)
-                        #print(found_journal_title_list)
-                        result = self.find_completness_report(journal_title, volume, issue, publication_year)
-                        print(result)
-                        return result
+                            found_journal_title_list.append(journal_title)
+                            #print(found_journal_title_list)
+                            result = self.find_completness_report(journal_title, volume, issue, publication_year)
+                            print(result)
+                            return result
+                        else:
+                            continue
                     except StaleElementReferenceException:
                         pass
                     except TimeoutException:
@@ -145,4 +148,8 @@ class NewAuditCheckAgent:
             return f"Journal Title : {journal_title} \n Volume: {volume} \n Issue: {issue} \n Issue Completeness Report:  {target_td.text} {target_ul.text}"
 
 
+    def force_quit_driver(self):
+        self.driver.quit()
 
+    def empty_searched_list(self):
+        found_journal_title_list.clear()
