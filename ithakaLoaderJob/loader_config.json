@@ -1,0 +1,5 @@
+{
+    "configSourceType": "GIT",
+    "propertyFileName": "AMD-Global_Hist_Epidemics-LoaderConfig.properties",
+    "loaderProfileFileName": "AMD-Global_Hist_Epidemics-LoaderProfile.xml"
+}

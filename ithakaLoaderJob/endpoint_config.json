@@ -1,0 +1,4 @@
+{
+    "loader_endpoint": "http://pr2ptgpprd43.ithaka.org:9500/loader/job/multistepjob/v1/submitwithjsonandparams/LoaderJob",
+    "status_endpoint": "http://pr2ptgpprd43.ithaka.org:9500/loader/job/v1/status/"
+}
