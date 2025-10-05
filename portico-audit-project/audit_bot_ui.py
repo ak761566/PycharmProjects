@@ -39,7 +39,7 @@ class AUDIT_BOT_UI:
         self.audit_window.minsize(width=600, height=300)
         self.audit_window.title("Portico Audit check bot")
         self.audit_window.config(padx=10, pady=10)
-        self.audit_window.resizable(False, False)
+        self.audit_window.resizable(False, True)
 
         # --------------Frame 1 -----------------------
         self.frame_login = Frame(self.audit_window)
@@ -100,7 +100,7 @@ class AUDIT_BOT_UI:
         self.run_button = Button(self.audit_frame, text="Run", font=(FONT_NAME, 10, "bold"), padx=20, command=self.login)
         self.run_button.grid(row=0, column=5,  padx=5, pady=10)
 
-        self.reset_button = Button(self.audit_frame, text="Reset", font=(FONT_NAME, 10, "bold"), padx=20)
+        self.reset_button = Button(self.audit_frame, text="Reset", font=(FONT_NAME, 10, "bold"), padx=20, command=self.reset_process)
         self.reset_button.grid(row=0, column=6, padx=5, pady=10)
 
 
@@ -116,7 +116,7 @@ class AUDIT_BOT_UI:
                                                                  font=(FONT_NAME, 10, "bold"))
 
         self.result_text = Text(self.result_frame, height=18, width=90)
-        self.result_text.insert("1.0", "Required columns in input file are JOURNAL_TITLE	VOLUME	ISSUE and	PROVIDER.\nColumns name should be in all caps and above pattern.")
+        self.result_text.insert("1.0", "Required columns in input file are JOURNAL_TITLE, VOLUME, ISSUE and	PROVIDER.\nColumns name should be in all caps and in the above pattern.")
         self.result_text.grid(row=1, column=0, columnspan=4)
 
 
@@ -128,13 +128,42 @@ class AUDIT_BOT_UI:
         choice = self.choice_var.get()
         if choice == 2:
             self.provider_name_label.config(text="Content Set")
-            self.provider_name_entry.delete("0", END)
+            #self.provider_name_entry.delete("0", END)
+            self.result_text.delete("1.0", END)
+            self.result_text.insert("1.0", "Required column in the input file is ISBN. Follow the column name pattern.")
         elif choice == 3:
             self.provider_name_label.config(text="Standard ID")
-            self.provider_name_entry.delete("0", END)
+            #self.provider_name_entry.delete("0", END)
+            self.result_text.delete("1.0", END)
         else:
             self.provider_name_label.config(text="Provider ID")
-            self.provider_name_entry.delete("0", END)
+            #self.provider_name_entry.delete("0", END)
+            self.result_text.delete("1.0", END)
+            self.result_text.insert("1.0",
+                                    "Required columns in input file are JOURNAL_TITLE, VOLUME, ISSUE and	PROVIDER.\nColumns name should be in all caps and in the above pattern.")
+
+    def reset_process(self):
+        choice = self.choice_var.get()
+        if choice == 1:
+            self.result_text.delete("1.0", END)
+
+            self.result_text.insert(END, "Process Stopped..\n")
+            data_handling.reset_process()
+            self.result_text.insert(END, "Required column in the input file is ISBN. Follow the column name pattern.")
+            self.audit_window.update()
+
+        elif choice == 2:
+            self.result_text.delete("1.0", END)
+            self.result_text.insert(END, "Porcess reset..\n")
+            result = book_data_handling.reset_process()
+            self.result_text.insert(END, result)
+            self.result_text.insert(END, "Required column in the input file is ISBN. Follow the column name pattern.")
+            self.audit_window.update()
+
+        else:
+            pass
+
+
 
 
     def set_file_path(self, path):
@@ -240,7 +269,7 @@ class AUDIT_BOT_UI:
                             if self.choice_var.get() == 1:
                                 data_handling.start_completeness_check_on_audit_site(unix_file_path, sheet_name, result_text, window, provider)
                             elif self.choice_var.get() == 2:
-                                pass
+                                book_data_handling.start_book_completeness_check(unix_file_path, sheet_name, provider, result_text, window)
                             else:
                                 pass
 
@@ -267,6 +296,8 @@ class AUDIT_BOT_UI:
         except FileNotFoundError:
             pass
         except JSONDecodeError:
+            pass
+        except KeyError:
             pass
 
 

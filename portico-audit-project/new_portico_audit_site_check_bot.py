@@ -13,6 +13,8 @@ import os
 import sys
 import time
 
+from urllib3.exceptions import MaxRetryError
+
 found_journal_title_list = []
 
 if getattr(sys, 'Frozen', False):
@@ -30,8 +32,15 @@ SEARCHED_TITLE_LIST = []
 class NewAuditCheckAgent:
     def __init__(self, username, password):
         self.chrome_option = webdriver.ChromeOptions()
-        #self.chrome_option.add_argument("--headless")
+        self.chrome_option.add_argument("--headless")
+        self.chrome_option.add_argument("start-maximized")
+        self.chrome_option.add_argument(
+            "user-agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36'")
+        self.chrome_option.add_argument("--disable-blink-features=AutomationControlled")
+
         self.chrome_option.add_experimental_option("detach", True)
+        self.chrome_option.add_experimental_option('excludeSwitches', ['enable-automation'])
+        self.chrome_option.add_experimental_option('useAutomationExtension', False)
 
         self.driver = webdriver.Chrome(options=self.chrome_option)
         self.wait  = WebDriverWait(self.driver, timeout=10)
@@ -53,10 +62,6 @@ class NewAuditCheckAgent:
         journal_title_text = None
         content_set = None
 
-        params = {
-            "ACCEPT-LANGUAGE" : "en-IN,en-GB;q=0.9,en-US;q=0.8,en;q=0.7",
-            "USER-AGENT" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
-        }
 
         if journal_title not in found_journal_title_list:
 
@@ -64,8 +69,8 @@ class NewAuditCheckAgent:
             self.driver.get(search_journals_page_url)
             # print("provider.upper(): ",provider.upper())
             try:
-                self.wait.until(ec.visibility_of_element_located((By.XPATH, f"//*[@id='nonMobileContainer']//div[10][a[@href='/Portico/pubView?id={provider.upper()}']]")))
-                div_table_titles = self.driver.find_elements(By.XPATH, f"//*[@id='nonMobileContainer']/div[div[10][a[@href='/Portico/pubView?id={provider.upper()}']]]")
+                self.wait.until(ec.visibility_of_element_located((By.XPATH, f"//*[@id='nonMobileContainer']//div[10][a[@href='/Portico/pubView?id={provider.lstrip().rstrip().upper()}']]")))
+                div_table_titles = self.driver.find_elements(By.XPATH, f"//*[@id='nonMobileContainer']/div[div[10][a[@href='/Portico/pubView?id={provider.lstrip().rstrip().upper()}']]]")
                 # print(f"length of div_table_titles {len(div_table_titles)}")
 
                 for title in div_table_titles:
@@ -85,17 +90,29 @@ class NewAuditCheckAgent:
                             found_journal_title_list.append(journal_title)
                             #print(found_journal_title_list)
                             result = self.find_completness_report(journal_title, volume, issue, publication_year)
-                            print(result)
+                            # print(result)
+                            return result
+
+                        elif title.find_element(By.XPATH, f"div[10]/a").get_attribute('href') == f"https://audit.portico.org/Portico/pubView?id={provider.upper().lstrip().rstrip()}":
+                            journal_title_text = title.find_element(By.XPATH, f"div[1]/a").text
+                            content_set = title.find_element(By.XPATH, f"div[1]/span").text
+                            result = f"Alternate title [ {journal_title_text} ] content set {content_set} found under the provider {provider.upper()}.\nUpdate sheet with this title."
+                            # print(result)
                             return result
                         else:
-                            continue
+                            result = "Journal title not found in Audit Site. Please investigate."
+                            return result
                     except StaleElementReferenceException:
+                        # print("journal_title2: ", journal_title)
                         pass
                     except TimeoutException:
+                        # print("journal_title3: ", journal_title)
                         pass
             except TimeoutException:
                 ## Case where Journal title not found on Audit Site
                 return 501
+            except MaxRetryError:
+                return 400
         else:
             #print(found_journal_title_list)
             result = self.find_completness_report(journal_title, volume, issue, publication_year)
@@ -110,9 +127,9 @@ class NewAuditCheckAgent:
             soup = BeautifulSoup(content, "html.parser")
             table_element = soup.find(name="table")
             #print(soup.table)
-            print(f"volume {volume}")
-            print(f"issue {issue}")
-            print(f"publication year {publication_year}")
+            # print(f"volume {volume}")
+            # print(f"issue {issue}")
+            # print(f"publication year {publication_year}")
 
             if volume == 'nan' or volume == '':
                 volume_search_pattern = fr".*\({publication_year}.*"

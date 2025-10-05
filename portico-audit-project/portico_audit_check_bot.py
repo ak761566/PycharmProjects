@@ -39,7 +39,7 @@ months = {
 class PorticoAuditCheckerBot:
     def __init__(self, user_name, password):
         self.chrome_option = webdriver.ChromeOptions()
-        self.chrome_option.add_argument('--headless')
+        #self.chrome_option.add_argument('--headless')
         self.chrome_option.add_experimental_option('detach', True)
 
         self.driver = webdriver.Chrome(options=self.chrome_option)
