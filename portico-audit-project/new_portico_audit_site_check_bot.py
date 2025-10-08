@@ -17,15 +17,16 @@ from urllib3.exceptions import MaxRetryError
 
 found_journal_title_list = []
 
-if getattr(sys, 'Frozen', False):
-    base_path = sys._MEIPASS
-else:
-    base_path = os.path.dirname(os.path.abspath(__file__))
+# if getattr(sys, 'Frozen', False):
+#     base_path = sys._MEIPASS
+# else:
+#     base_path = os.path.dirname(os.path.abspath(__file__))
+#
+# log_folder_path = os.path.join(base_path, 'loggin-data')
+# html_folder_path = os.path.join(base_path, "source_html")
 
 
-html_folder_path = os.path.join(base_path, "source_html")
-
-os.makedirs(html_folder_path, exist_ok=True)
+# os.makedirs(html_folder_path, exist_ok=True)
 
 PORTICO_AUDIT_SITE_URL = "https://audit.portico.org/Portico/login.html"
 SEARCHED_TITLE_LIST = []
@@ -41,6 +42,9 @@ class NewAuditCheckAgent:
         self.chrome_option.add_experimental_option("detach", True)
         self.chrome_option.add_experimental_option('excludeSwitches', ['enable-automation'])
         self.chrome_option.add_experimental_option('useAutomationExtension', False)
+
+        self.log_folder_path = None
+        self.html_folder_path = None
 
         self.driver = webdriver.Chrome(options=self.chrome_option)
         self.wait  = WebDriverWait(self.driver, timeout=10)
@@ -84,7 +88,7 @@ class NewAuditCheckAgent:
                             self.driver.get(f"https://audit.portico.org/Portico/rest/cmi/getCompletenessReport?cs={content_set}")
                             page_source = self.driver.page_source
                             #print(page_source)
-                            with open(f"{html_folder_path}/{journal_title}.html", "w") as html_file:
+                            with open(os.path.join(self.html_folder_path ,f"{journal_title}.html"), "w") as html_file:
                                 html_file.write(page_source)
 
                             found_journal_title_list.append(journal_title)
@@ -117,12 +121,12 @@ class NewAuditCheckAgent:
             #print(found_journal_title_list)
             result = self.find_completness_report(journal_title, volume, issue, publication_year)
             #response = f"{journal_title_text} \n {content_set} \n Issue completeness report:\n {result} "
-            print(result)
+            #print(result)
             return result
 
 
     def find_completness_report(self, journal_title, volume, issue, publication_year):
-        with open(f"{html_folder_path}/{journal_title}.html", "r") as html_file:
+        with open(os.path.join(self.html_folder_path ,f"{journal_title}.html"), "r") as html_file:
             content = html_file.read()
             soup = BeautifulSoup(content, "html.parser")
             table_element = soup.find(name="table")
@@ -139,29 +143,29 @@ class NewAuditCheckAgent:
                 else:
                     volume_search_pattern = fr"v.{volume}.*"
 
-            print("volume_search_pattern: ", volume_search_pattern)
+            # print("volume_search_pattern: ", volume_search_pattern)
             target_td  = table_element.find(text=re.compile(volume_search_pattern)).parent
-            print(target_td)
+            #print(target_td)
             target_row =  target_td.parent
-            print("target_row\n", target_row)
+            #print("target_row\n", target_row)
             if re.match(r'\d\.\d',issue):
-                print("m1")
+                #print("m1")
                 custom_issue = re.match(r'\d\.(\d)', issue).group(1)
                 issue_search_pattern = fr"n.{custom_issue}"
             elif re.match(r'\d+\s*\(\d\d\d\d\)\s*\d+', issue):
-                print("m2")
+                #print("m2")
                 custom_issue = re.match(r'\d+\s*\(\d\d\d\d\)\s*(\d+)', issue).group(1)
                 issue_search_pattern = fr"n.{custom_issue}"
             else:
-                print("m3")
+                #print("m3")
                 issue_search_pattern = fr"n.{issue}"
 
-            print("issue_search_pattern: ", issue_search_pattern )
+            #print("issue_search_pattern: ", issue_search_pattern )
             target_li  = target_row.find(text=re.compile(issue_search_pattern))
-            print("target_li: ", target_li)
+            #print("target_li: ", target_li)
             target_ul = target_li.parent.parent
-            print("target_td:", target_td)
-            print("target_ul: ", target_ul)
+            #print("target_td:", target_td)
+            #print("target_ul: ", target_ul)
             return f"Journal Title : {journal_title} \n Volume: {volume} \n Issue: {issue} \n Issue Completeness Report:  {target_td.text} {target_ul.text}"
 
 

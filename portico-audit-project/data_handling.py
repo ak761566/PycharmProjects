@@ -6,7 +6,7 @@ from tkinter import messagebox
 from datetime import *
 from datetime import timedelta
 from selenium.common import WebDriverException
-from log_handling import *
+#from log_handling import *
 from portico_audit_check_bot import *
 from new_portico_audit_site_check_bot import *
 
@@ -22,13 +22,15 @@ SHEET_NAME = ""
 bot = None
 agent = None
 
-if getattr(sys, 'Frozen', False):
-    base_path = sys._MEIPASS
-else:
-    base_path = os.path.dirname(os.path.abspath(__file__))
+# if getattr(sys, 'Frozen', False):
+#     base_path = sys._MEIPASS
+# else:
+#     base_path = os.path.dirname(os.path.abspath(__file__))
+#
+# log_folder_path = os.path.join(base_path, 'loggin-data')
+#
+# html_folder_path = os.path.join(base_path, "source_html")
 
-
-html_folder_path = os.path.join(base_path, "source_html")
 
 def return_error_codes(err_code, journal_title, PROVIDER):
     error_codes = {
@@ -55,7 +57,7 @@ def login_in_portico_audit_site(username, password):
 #         start_completeness_check_on_audit_site(XSLX_FILE_PATH, SHEET_NAME)
 
 
-def start_completeness_check_on_audit_site(xsls_file_path, sheet_name, result_text, window, provider):
+def start_completeness_check_on_audit_site(xsls_file_path, sheet_name, result_text, window, provider, log_folder_path, html_folder_path ):
     global bot
     try:
         data_frame = pandas.read_excel(xsls_file_path, sheet_name)
@@ -107,6 +109,9 @@ def start_completeness_check_on_audit_site(xsls_file_path, sheet_name, result_te
                 except AttributeError:
                     pub_year = None
 
+                agent.log_folder_path = log_folder_path
+                agent.html_folder_path = html_folder_path
+
                 response = agent.search_journal_title_on_audit_site(journal_title=row.JOURNAL_TITLE, volume=volume, issue=issue, publication_year=pub_year, provider=provider)
                 #response = bot.check_journal_title_on_audit(quit_driver, journal_title=row.JOURNAL_TITLE, volume=volume, issue=issue, publication_year=pub_year , provider=provider)
 
@@ -130,6 +135,10 @@ def start_completeness_check_on_audit_site(xsls_file_path, sheet_name, result_te
 
             times_stamp = datetime.now().strftime("%d%m%Y%H%M%S")
 
+            # with open(os.path.join(log_folder_path, "input_file_details.json"), "r") as input_file_data:
+            #     file_data = json.load(input_file_data)
+            #     input_file_name = file_data["input_file_name"]
+
             with open(os.path.join(log_folder_path, "input_file_details.json"), "r") as input_file_data:
                 file_data = json.load(input_file_data)
                 input_file_name = file_data["input_file_name"]
@@ -144,6 +153,7 @@ def start_completeness_check_on_audit_site(xsls_file_path, sheet_name, result_te
             minutes_lapses = int(TIME_DIFF.total_seconds()//60)
             seconds_lapses = int(TIME_DIFF.total_seconds()%60)
 
+            print("Generating report.....")
             result_text.delete("1.0", END)
             result_text.insert(END, f"Time lapse: {abs(minutes_lapses)} minutes and  {seconds_lapses} seconds.\n\n Please check output file [{input_file_name}_{times_stamp}.xlsx].\n")
             if len(title_not_found_on_audit) > 0:
@@ -153,11 +163,11 @@ def start_completeness_check_on_audit_site(xsls_file_path, sheet_name, result_te
 
             window.update()
             agent.force_quit_driver()
-            # if os.path.isdir(html_folder_path):
-            #     for filename in os.listdir(html_folder_path):
-            #         file_path = os.path.join(html_folder_path, filename)
-            #         os.remove(file_path)
-            #         print(f"File {file_path} deleted successfully.")
+            if os.path.isdir(html_folder_path):
+                for filename in os.listdir(html_folder_path):
+                    file_path = os.path.join(html_folder_path, filename)
+                    os.remove(file_path)
+                    print(f"File {file_path} deleted successfully.")
             agent.empty_searched_list()
         else:
             result_text.delete("1.0", END)

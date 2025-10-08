@@ -23,8 +23,10 @@ if getattr(sys, 'Frozen', False):
 else:
     base_path = os.path.dirname(os.path.abspath("__file__"))
 
-source_file_path = os.path.join(base_path,'source_html')
+log_folder_path = os.path.join(base_path, 'loggin-data')
+html_folder_path = os.path.join(base_path, 'source_html')
 
+os.makedirs(html_folder_path, exist_ok=True)
 
 AUDIT_URL = "https://audit.portico.org/Portico/login.html"
 MODE = "LOAD" ## LOAD/SCRAPE
@@ -46,6 +48,9 @@ class BookCompletenessCheckerBot:
         self.chrome_option.add_experimental_option("detach", True)
         self.chrome_option.add_experimental_option('excludeSwitches', ['enable-automation'])
         self.chrome_option.add_experimental_option('useAutomationExtension', False)
+
+        self.log_folder_path = None
+        self.html_folder_path = None
 
         self.driver  = webdriver.Chrome(options=self.chrome_option)
         self.wait  = WebDriverWait(self.driver, timeout=20)
@@ -92,8 +97,8 @@ class BookCompletenessCheckerBot:
 
             global provider_page_source
             provider_page_source = self.driver.page_source
-            global source_file_path
-            with open(f"{source_file_path}/{provider}_archived_book.html", "w", encoding="utf-8") as source_file:
+
+            with open(f"{self.html_folder_path}/{provider}_archived_book.html", "w", encoding="utf-8") as source_file:
                 source_file.write(provider_page_source)
 
         else:
@@ -104,43 +109,52 @@ class BookCompletenessCheckerBot:
         AUDIT_ALL_BOOKS_URL_ISBN = f"https://audit.portico.org/Portico/auListView?search={isbn}&content=E-Book%2520Content"
         result = None
         global MODE
-
-        try:
-            self.driver.get(AUDIT_ALL_BOOKS_URL_ISBN)
-            self.wait.until(ec.visibility_of_element_located((By.ID, "nonMobileContainer")))
-            # nonMobileContainer_element  = self.driver.find_element(By.ID, "nonMobileContainer")
-            # self.wait.until(lambda _ : nonMobileContainer_element.is_displayed())
-
-            isbn_page_source = self.driver.page_source
-            # print(isbn_page_source)
-            global source_file_path
-            with open(f"{source_file_path}/{isbn}.html", "w", encoding="utf-8") as isbn_file:
-                isbn_file.write(isbn_page_source)
-
+        global html_folder_path
+        if os.path.exists(f"{self.html_folder_path}/{isbn}.html"):
             result = self.find_details_from_source_file(isbn, provider)
-
-            # result = None
-
-        except TimeoutException:
+        else:
             try:
-                self.wait.until(ec.visibility_of_element_located((By.CLASS_NAME, "errorMessage")))
-                result = f"ISBN {isbn} not found."
-                ISBN_NOT_FOUND_UNDER_CS.append(isbn)
+                self.driver.get(AUDIT_ALL_BOOKS_URL_ISBN)
+                self.wait.until(ec.visibility_of_element_located((By.ID, "nonMobileContainer")))
+                # nonMobileContainer_element  = self.driver.find_element(By.ID, "nonMobileContainer")
+                # self.wait.until(lambda _ : nonMobileContainer_element.is_displayed())
+
+                isbn_page_source = self.driver.page_source
+                # print(isbn_page_source)
+
+                # FileNotFoundError: [Errno 2]
+                # No
+                # such
+                # file or directory: 'C:\\Users\\vff\\AppData\\Local\\Temp\\_MEI425002\\source_html\\9781442669260.html'
+
+                with open(os.path.join(self.html_folder_path, f"{isbn}.html"), "w", encoding="utf-8") as isbn_file:
+                    isbn_file.write(isbn_page_source)
+
+                result = self.find_details_from_source_file(isbn, provider)
+
+                # result = None
+
             except TimeoutException:
-                result = 501
-        except UnicodeEncodeError:
-            result = 505
-        except MaxRetryError:
-            result = 400
-        except WebDriverException:
-            result = 400
+                try:
+                    self.wait.until(ec.visibility_of_element_located((By.CLASS_NAME, "errorMessage")))
+                    result = f"ISBN {isbn} not found."
+                    ISBN_NOT_FOUND_UNDER_CS.append(isbn)
+                except TimeoutException:
+                    result = 501
+            except UnicodeEncodeError:
+                result = 505
+            except MaxRetryError:
+                result = 400
+            except WebDriverException:
+                result = 400
 
 
         return result
 
     def find_details_from_source_file(self, isbn, provider):
         result = ''
-        with open(f"{source_file_path}/{isbn}.html", "r", encoding="utf-8") as source_data:
+        global html_folder_path
+        with open(os.path.join(self.html_folder_path, f"{isbn}.html"), "r", encoding="utf-8") as source_data:
             content = source_data.read()
         # with open(f"{source_file_path}/{provider}_archived_book.html", "r", encoding="utf-8") as source_file_data:
         #     content = source_file_data.read()
@@ -157,14 +171,14 @@ class BookCompletenessCheckerBot:
             content_set = table_title.find(name="span", class_="cs").text
             result = f"Book Title: {title} \n {content_set} \n {isbn}\n"
             ISBN_FOUND_UNDER_CS.append(isbn)
-            print(f"Book Title: {title} \n {content_set} \n {isbn}\n")
+            #print(f"Book Title: {title} \n {content_set} \n {isbn}\n")
         else:
             all_isbn_elements = container_element.find_all(name="span", class_="isbn")
             ISBN_FOUND_UNDER_OTHER_PROVIDER.append(isbn)
             for isbn in all_isbn_elements:
                 content_set = isbn.next_sibling.text
                 result += f"{isbn.text} found under the CS {content_set}\n"
-                print(f"{isbn.text} found under the CS {content_set}\n")
+                #print(f"{isbn.text} found under the CS {content_set}\n")
 
 
         return result

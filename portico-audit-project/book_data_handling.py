@@ -11,14 +11,18 @@ from trio_websocket import open_websocket
 from win32ctypes.pywin32.pywintypes import datetime
 
 from book_portico_audit_site_check_bot import *
-from data_handling import base_path
+
+
 
 if getattr(sys, 'Frozen', False):
     base_path = sys._MEIPASS
 else:
     base_path = os.path.dirname(os.path.abspath("__file__"))
 
-source_file_path = os.path.join(base_path,'source_html')
+log_folder_path = os.path.join(base_path, 'loggin-data')
+html_folder_path = os.path.join(base_path, 'source_html')
+
+# os.makedirs(source_file_path, exist_ok=True)
 
 CONTENT_SET = None
 agent = None
@@ -35,7 +39,7 @@ def reset_process():
     return result
 
 
-def start_book_completeness_check(unix_file_path, sheet_name, content_set, result_text, window):
+def start_book_completeness_check(unix_file_path, sheet_name, content_set, result_text, window, log_folder_path, html_folder_path ):
     global CONTENT_SET
 
     CONTENT_SET = content_set
@@ -59,6 +63,9 @@ def start_book_completeness_check(unix_file_path, sheet_name, content_set, resul
         result_text.insert(END, f"Processing {counter}/{len(data_frame)} row...\n")
         window.update()
         print(f"Processing {counter}/{len(data_frame)} row...")
+
+        agent.log_folder_path = log_folder_path
+        agent.html_folder_path = html_folder_path
 
         isbn = row.ISBN
         if isbn not in seen_isbn:
@@ -88,7 +95,7 @@ def start_book_completeness_check(unix_file_path, sheet_name, content_set, resul
         process_end_time = timedelta(hours=datetime.now().hour, minutes=datetime.now().minute, seconds=datetime.now().second)
 
 
-        with open(f"{base_path}/log/input_file_details.json", "r") as input_file_details:
+        with open(os.path.join(f"{log_folder_path}", "input_file_details.json"), "r") as input_file_details:
             input_information = json.load(input_file_details)
             file_name = input_information["input_file_name"]
 
@@ -98,15 +105,16 @@ def start_book_completeness_check(unix_file_path, sheet_name, content_set, resul
         lapsed_minutes  = int(lapsed_time.total_seconds()//60)
         lapsed_seconds = int(lapsed_time.total_seconds()%60)
 
-        print(f"Analysis completed. Report file path {file_name}_{time_stamp}.xlsx")
-        print(f"Total lapsed time: {lapsed_minutes} minutes and {lapsed_seconds} seconds.")
+        #print(f"Analysis completed. Report file path {file_name}_{time_stamp}.xlsx")
+        #print(f"Total lapsed time: {lapsed_minutes} minutes and {lapsed_seconds} seconds.")
 
-        if os.path.isdir(source_file_path):
-            for file in os.listdir(source_file_path):
-                file_path = os.path.join(source_file_path, file)
+        if os.path.isdir(html_folder_path):
+            for file in os.listdir(html_folder_path):
+                file_path = os.path.join(html_folder_path, file)
                 os.remove(file_path)
-                print(f"Deleted [{file_path}] file successfully.")
+                #print(f"Deleted [{file_path}] file successfully.")
 
+        print("Generating report.....")
         result_text.delete("1.0", END)
         result_text.insert(END, f"Total lapsed time: {lapsed_minutes} minutes and {lapsed_seconds} seconds.\nAnalysis is complete.\nReport file path {file_name.replace('.xlsx','')}_{time_stamp}.xlsx\n")
 

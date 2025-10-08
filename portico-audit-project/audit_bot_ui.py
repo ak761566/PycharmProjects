@@ -5,7 +5,7 @@ from tkinter import messagebox
 import data_handling
 import book_data_handling
 from data_handling import *
-from log_handling import *
+#from log_handling import *
 from portico_audit_check_bot import *
 import sys
 import os
@@ -21,15 +21,17 @@ VOLUME = None
 ISSUE = None
 provider = None
 
-# if getattr(sys, 'frozen', False):
-#     base_path = sys._MEIPASS
-# else:
-#     base_path = os.path.dirname(os.path.abspath(__file__))
-#
-# log_folder_path = os.path.join(base_path, 'log')
-#
-# os.makedirs(log_folder_path, exist_ok=True)
+if getattr(sys, 'frozen', False):
+    base_path = sys._MEIPASS
+else:
+    base_path = os.path.dirname(os.path.abspath(__file__))
 
+log_folder_path = os.path.join(base_path, 'loggin-data')
+
+html_folder_path = os.path.join(base_path, "source_html")
+
+os.makedirs(log_folder_path, exist_ok=True)
+os.makedirs(html_folder_path, exist_ok=True)
 
 class AUDIT_BOT_UI:
     def __init__(self):
@@ -154,7 +156,7 @@ class AUDIT_BOT_UI:
 
         elif choice == 2:
             self.result_text.delete("1.0", END)
-            self.result_text.insert(END, "Porcess reset..\n")
+            self.result_text.insert(END, "Process reset..\n")
             result = book_data_handling.reset_process()
             self.result_text.insert(END, result)
             self.result_text.insert(END, "Required column in the input file is ISBN. Follow the column name pattern.")
@@ -242,6 +244,7 @@ class AUDIT_BOT_UI:
                         "sheet_name" : self.sheet_name_entry.get(),
                         "provider_name": self.provider_name_entry.get()
                     }
+
                     with open(os.path.join(log_folder_path, "input_file_details.json"), "w+") as input_file_data:
                         json.dump(input_details, input_file_data, indent=4)
 
@@ -267,9 +270,9 @@ class AUDIT_BOT_UI:
                     else:
                         try:
                             if self.choice_var.get() == 1:
-                                data_handling.start_completeness_check_on_audit_site(unix_file_path, sheet_name, result_text, window, provider)
+                                data_handling.start_completeness_check_on_audit_site(unix_file_path, sheet_name, result_text, window, provider, log_folder_path, html_folder_path)
                             elif self.choice_var.get() == 2:
-                                book_data_handling.start_book_completeness_check(unix_file_path, sheet_name, provider, result_text, window)
+                                book_data_handling.start_book_completeness_check(unix_file_path, sheet_name, provider, result_text, window, log_folder_path, html_folder_path )
                             else:
                                 pass
 
