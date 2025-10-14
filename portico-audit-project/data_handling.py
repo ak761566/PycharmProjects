@@ -173,12 +173,13 @@ def start_completeness_check_on_audit_site(xsls_file_path, sheet_name, result_te
             result_text.delete("1.0", END)
             result_text.insert(END,
                                f"Please try again..")
-    except AttributeError:
+    except AttributeError as e:
+        print(e)
         result_text.delete("1.0", END)
         result_text.insert(END,
                            "\n\n Error: Please check the column header. Required [JOURNAL_TITLE	VOLUME	ISSUE and	PROVIDER.]\n")
         window.update()
-        agent.force_quit_driver()
+        #agent.force_quit_driver()
     except ValueError:
         result_text.delete("1.0", END)
         result_text.insert(END,

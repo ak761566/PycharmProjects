@@ -126,6 +126,8 @@ class NewAuditCheckAgent:
 
 
     def find_completness_report(self, journal_title, volume, issue, publication_year):
+        notfound_html_doc = "<tr><td><ul><li>Issue not found for this volume.</li></ul></td></tr>"
+        error_soup =  BeautifulSoup(notfound_html_doc, "html.parser")
         with open(os.path.join(self.html_folder_path ,f"{journal_title}.html"), "r") as html_file:
             content = html_file.read()
             soup = BeautifulSoup(content, "html.parser")
@@ -143,7 +145,7 @@ class NewAuditCheckAgent:
                 else:
                     volume_search_pattern = fr"v.{volume}.*"
 
-            # print("volume_search_pattern: ", volume_search_pattern)
+            #print("volume_search_pattern: ", volume_search_pattern)
             target_td  = table_element.find(text=re.compile(volume_search_pattern)).parent
             #print(target_td)
             target_row =  target_td.parent
@@ -160,10 +162,14 @@ class NewAuditCheckAgent:
                 #print("m3")
                 issue_search_pattern = fr"n.{issue}"
 
-            #print("issue_search_pattern: ", issue_search_pattern )
+           # print("issue_search_pattern: ", issue_search_pattern )
             target_li  = target_row.find(text=re.compile(issue_search_pattern))
             #print("target_li: ", target_li)
-            target_ul = target_li.parent.parent
+            if target_li is None:
+                target_ul = error_soup.find(name="ul")
+                #target_ul = target_row.find(text=re.compile("No more issues"))
+            else:
+                target_ul = target_li.parent.parent
             #print("target_td:", target_td)
             #print("target_ul: ", target_ul)
             return f"Journal Title : {journal_title} \n Volume: {volume} \n Issue: {issue} \n Issue Completeness Report:  {target_td.text} {target_ul.text}"
